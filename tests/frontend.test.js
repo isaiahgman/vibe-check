@@ -10,26 +10,32 @@ describe('Focus Flow Logic Tests', () => {
 
   it('addTask logic should append to array and clear input', () => {
     const tasks = [];
+    let nextId = 1;
     let newTask = "Meditate for 10 minutes";
     
     if (newTask.trim()) {
-      tasks.push(newTask.trim());
+      tasks.push({ id: nextId++, text: newTask.trim() });
       newTask = "";
     }
 
     expect(tasks.length).toBe(1);
-    expect(tasks[0]).toBe("Meditate for 10 minutes");
+    expect(tasks[0].text).toBe("Meditate for 10 minutes");
     expect(newTask).toBe("");
   });
 
   it('deleteTask logic should correctly splice the array', () => {
-    const tasks = ["Task 1", "Task 2", "Task 3"];
-    const indexToDelete = 1;
+    const tasks = [
+        { id: 1, text: "Task 1" },
+        { id: 2, text: "Task 2" },
+        { id: 3, text: "Task 3" }
+    ];
+    const idToDelete = 2;
 
-    tasks.splice(indexToDelete, 1);
+    const index = tasks.findIndex(t => t.id === idToDelete);
+    if (index !== -1) tasks.splice(index, 1);
 
     expect(tasks.length).toBe(2);
-    expect(tasks[0]).toBe("Task 1");
-    expect(tasks[1]).toBe("Task 3");
+    expect(tasks[0].text).toBe("Task 1");
+    expect(tasks[1].text).toBe("Task 3");
   });
 });

@@ -1,3 +1,8 @@
+@property --wave-1 { syntax: '<color>'; inherits: false; initial-value: rgba(26, 115, 232, 0.4); }
+@property --wave-2 { syntax: '<color>'; inherits: false; initial-value: rgba(234, 67, 53, 0.35); }
+@property --wave-3 { syntax: '<color>'; inherits: false; initial-value: rgba(52, 168, 83, 0.35); }
+@property --wave-4 { syntax: '<color>'; inherits: false; initial-value: rgba(251, 188, 5, 0.35); }
+
 /* Core Variables for Dynamic Wave Mesh (Google Colors) */
 :root {
     --wave-1: rgba(26, 115, 232, 0.4); /* Blue */
@@ -32,7 +37,7 @@ html.dark {
         radial-gradient(circle at calc(var(--mouse-y, 50%)) calc(100% - var(--mouse-x, 50%)), var(--wave-4) 0%, transparent 45%),
         radial-gradient(circle at 50% 50%, var(--wave-3) 0%, transparent 60%);
     filter: blur(60px);
-    transition: background-image 0.2s ease-out;
+    transition: --wave-1 0.5s, --wave-2 0.5s, --wave-3 0.5s, --wave-4 0.5s;
 }
 
 /* Custom Cursor */

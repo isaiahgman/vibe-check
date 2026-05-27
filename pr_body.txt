@@ -1,0 +1,7 @@
+## Summary
+Fixes two critical UI/UX bugs: the Vue render deletion bug that caused multiple tasks to disappear from the DOM when deleted, and the stuttering lag on the wave mesh background.
+
+## Changes
+- **Vue Reactivity**: Refactored the `tasks` array to use unique object IDs instead of array indices for stable `v-for` keys.
+- **Wave Mesh Physics**: Removed `background-image` transition which caused mouse stuttering. Implemented CSS `@property` definitions for color variables to ensure buttery-smooth dark mode transitions without lagging the mouse physics.
+- **Tests**: Updated `frontend.test.js` to cover object-based array mutations.

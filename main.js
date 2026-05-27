@@ -21,10 +21,11 @@ const App = {
         };
 
         const tasks = ref([
-            'Review PR #42',
-            'Update Vue components',
-            'Write documentation'
+            { id: 1, text: 'Review PR #42' },
+            { id: 2, text: 'Update Vue components' },
+            { id: 3, text: 'Write documentation' }
         ]);
+        let nextId = 4;
         const newTask = ref('');
 
         const sessions = ref([
@@ -36,14 +37,14 @@ const App = {
 
         const addTask = () => {
             if (newTask.value.trim()) {
-                tasks.value.push(newTask.value.trim());
+                tasks.value.push({ id: nextId++, text: newTask.value.trim() });
                 newTask.value = '';
             }
         };
 
-        const deleteTask = (index) => {
-            // Wait for Vue's next tick before animating the exit if we want, or rely on Tailwind transition
-            tasks.value.splice(index, 1);
+        const deleteTask = (id) => {
+            const index = tasks.value.findIndex(t => t.id === id);
+            if (index !== -1) tasks.value.splice(index, 1);
         };
 
         // 3D Tilt Effect applied to elements with .card class
