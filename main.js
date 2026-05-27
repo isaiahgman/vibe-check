@@ -2,7 +2,13 @@ const { createApp, ref, onMounted } = Vue;
 
 const App = {
     setup() {
-        const isDarkMode = ref(localStorage.getItem('theme') === 'dark');
+        let initialTheme = false;
+        try {
+            initialTheme = localStorage.getItem('theme') === 'dark';
+        } catch(e) {
+            console.warn("localStorage unavailable");
+        }
+        const isDarkMode = ref(initialTheme);
         
         // Gamification State
         const level = ref(1);
@@ -23,7 +29,9 @@ const App = {
                 document.documentElement.classList.remove('dark');
             }
             
-            localStorage.setItem('theme', theme);
+            try {
+                localStorage.setItem('theme', theme);
+            } catch(e) {}
         };
 
         let nextId = 4;
