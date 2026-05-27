@@ -3,60 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vibe Check</title>
+    <title>Focus Flow</title>
+    
+    <!-- Google Fonts & Material Design Icons -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.x/css/materialdesignicons.min.css" rel="stylesheet">
+    
+    <!-- Vuetify CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@3.4.0/dist/vuetify.min.css" rel="stylesheet">
+    
+    <!-- Custom GSAP Styling (Optional) -->
     <link rel="stylesheet" href="style.css">
-    <!-- Vue 3 CDN -->
+    
+    <!-- Vue 3 & Vuetify JS -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@3.4.0/dist/vuetify.min.js"></script>
     <!-- GSAP CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
 <body>
-    <div class="wave-background"></div>
     <div id="custom-cursor"></div>
-    <div id="app" class="container">
-        <header>
-            <button class="theme-toggle" @click="toggleTheme" :aria-label="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">{{ isDarkMode ? '☀️' : '🌙' }}</button>
-            <h1>Focus Flow</h1>
-            <p class="subtitle">Focus and track your sessions</p>
-        </header>
-        
-        <main class="grid-layout">
-            <!-- Task Manager Section -->
-            <section class="task-manager">
-                <h2>Task Manager</h2>
-                <div class="input-group">
-                    <input type="text" v-model="newTask" @keyup.enter="addTask" placeholder="Add a new task to focus on...">
-                    <button @click="addTask">Add</button>
-                </div>
-                <ul class="task-list">
-                    <li v-for="(task, index) in tasks" :key="index" 
-                        class="card task-card" 
-                        @mousemove="tiltEffect($event)" 
-                        @mouseleave="resetTilt($event)">
-                        <span class="task-text">{{ task }}</span>
-                        <button class="delete-btn" @click="deleteTask(index, $event)" aria-label="Delete task">✕</button>
-                    </li>
-                    <li v-if="tasks.length === 0" class="empty-state">
-                        No tasks yet. Add one above!
-                    </li>
-                </ul>
-            </section>
-            
-            <!-- Session History Section -->
-            <section class="session-history">
-                <h2>Session History</h2>
-                <div class="history-grid">
-                    <div v-for="(session, index) in sessions" :key="index" 
-                         class="card history-card"
-                         @mousemove="tiltEffect($event)" 
-                         @mouseleave="resetTilt($event)">
-                        <h3>{{ session.title }}</h3>
-                        <p class="date">{{ session.date }}</p>
-                        <span class="status" :class="session.status.toLowerCase()">{{ session.status }}</span>
-                    </div>
-                </div>
-            </section>
-        </main>
+    <div id="app">
+        <v-app :theme="isDarkMode ? 'dark' : 'light'">
+            <!-- App Bar -->
+            <v-app-bar flat color="transparent" class="px-4 mt-2">
+                <v-app-bar-title class="text-h4 font-weight-bold">Focus Flow</v-app-bar-title>
+                <v-spacer></v-spacer>
+                <v-btn icon @click="toggleTheme">
+                    <v-icon size="large">{{ isDarkMode ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
+                </v-btn>
+            </v-app-bar>
+
+            <!-- Main Content -->
+            <v-main>
+                <v-container class="mt-8" max-width="1200">
+                    <p class="text-subtitle-1 text-medium-emphasis mb-8">Focus and track your sessions</p>
+
+                    <v-row>
+                        <!-- Task Manager -->
+                        <v-col cols="12" md="4">
+                            <h2 class="text-h5 font-weight-medium mb-4">Task Manager</h2>
+                            
+                            <div class="d-flex align-center mb-6">
+                                <v-text-field
+                                    v-model="newTask"
+                                    label="Add a new task..."
+                                    variant="outlined"
+                                    hide-details
+                                    @keyup.enter="addTask"
+                                ></v-text-field>
+                                <v-btn 
+                                    color="primary" 
+                                    size="large" 
+                                    class="ml-2" 
+                                    @click="addTask"
+                                    elevation="2"
+                                >
+                                    Add
+                                </v-btn>
+                            </div>
+
+                            <v-slide-y-transition group>
+                                <v-card
+                                    v-for="(task, index) in tasks"
+                                    :key="task + index"
+                                    class="mb-3"
+                                    elevation="1"
+                                    hover
+                                >
+                                    <v-card-text class="d-flex justify-space-between align-center py-2 pl-4 pr-2">
+                                        <span class="text-body-1">{{ task }}</span>
+                                        <v-btn icon variant="text" color="error" @click="deleteTask(index)">
+                                            <v-icon>mdi-close</v-icon>
+                                        </v-btn>
+                                    </v-card-text>
+                                </v-card>
+                            </v-slide-y-transition>
+                            
+                            <div v-if="tasks.length === 0" class="text-center text-medium-emphasis mt-6 font-italic">
+                                No tasks yet. Add one above!
+                            </div>
+                        </v-col>
+
+                        <!-- Session History -->
+                        <v-col cols="12" md="8">
+                            <h2 class="text-h5 font-weight-medium mb-4">Session History</h2>
+                            <v-row>
+                                <v-col
+                                    v-for="(session, index) in sessions"
+                                    :key="index"
+                                    cols="12"
+                                    sm="6"
+                                    md="4"
+                                >
+                                    <v-card class="h-100" hover elevation="2">
+                                        <v-card-title class="text-h6">{{ session.title }}</v-card-title>
+                                        <v-card-subtitle class="mt-1">{{ session.date }}</v-card-subtitle>
+                                        <v-card-text class="mt-4">
+                                            <v-chip
+                                                :color="getStatusColor(session.status)"
+                                                size="small"
+                                                class="font-weight-bold"
+                                                variant="flat"
+                                            >
+                                                {{ session.status.toUpperCase() }}
+                                            </v-chip>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-col>
+                            </v-row>
+                        </v-col>
+                    </v-row>
+                </v-container>
+            </v-main>
+        </v-app>
     </div>
     <script src="main.js"></script>
 </body>
