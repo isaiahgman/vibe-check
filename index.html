@@ -23,17 +23,17 @@
     <!-- Custom CSS strictly for the Wave Mesh Background -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 min-h-screen relative overflow-x-hidden font-sans transition-colors duration-500">
+<body class="text-slate-900 dark:text-slate-100 min-h-screen relative overflow-x-hidden font-sans transition-colors duration-500">
     <!-- Fluid Wave Mesh -->
     <div class="wave-background"></div>
     <div id="custom-cursor"></div>
 
-    <div id="app" class="max-w-6xl mx-auto px-6 py-12">
+    <div id="app" class="max-w-6xl mx-auto px-6 py-12 relative z-10">
         <!-- Header -->
         <header class="text-center mb-16 relative">
             <button 
                 @click="toggleTheme" 
-                class="absolute top-0 right-0 p-3 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md border border-white/40 dark:border-white/10 rounded-full shadow-lg hover:scale-110 transition-transform duration-200 text-xl"
+                class="absolute top-0 right-0 p-3 bg-white/20 dark:bg-black/20 backdrop-blur-xl border border-white/50 dark:border-white/10 rounded-full shadow-2xl hover:scale-110 hover:bg-white/40 dark:hover:bg-black/40 transition-all duration-300 text-xl"
                 :aria-label="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
             >
                 {{ isDarkMode ? '☀️' : '🌙' }}
@@ -56,7 +56,7 @@
                         v-model="newTask" 
                         @keyup.enter="addTask" 
                         placeholder="Add a new task..."
-                        class="flex-1 px-4 py-3 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-white/50 dark:border-white/10 rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder-slate-400 dark:placeholder-slate-500"
+                        class="flex-1 px-4 py-3 bg-white/20 dark:bg-black/20 backdrop-blur-xl border border-white/50 dark:border-white/10 rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all placeholder-slate-500 dark:placeholder-slate-400 font-medium text-slate-900 dark:text-slate-100"
                     >
                     <button 
                         @click="addTask"
@@ -69,9 +69,9 @@
                 <!-- Task List -->
                 <ul class="space-y-4">
                     <li 
-                        v-for="(task, index) in tasks" 
-                        :key="task + index"
-                        class="card group flex justify-between items-center bg-white/40 dark:bg-slate-800/40 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-2xl p-5 shadow-xl hover:shadow-2xl transition-all duration-300 transform"
+                        v-for="task in tasks" 
+                        :key="task.id"
+                        class="card group flex justify-between items-center bg-white/30 dark:bg-black/30 backdrop-blur-2xl border border-white/50 dark:border-white/10 rounded-2xl p-5 shadow-2xl hover:bg-white/40 dark:hover:bg-black/40 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-all duration-300 transform"
                     >
                         <span class="text-lg font-medium">{{ task }}</span>
                         <button 
@@ -98,7 +98,7 @@
                     <div 
                         v-for="(session, index) in sessions" 
                         :key="index"
-                        class="card flex flex-col gap-3 bg-white/40 dark:bg-slate-800/40 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 transform"
+                        class="card flex flex-col gap-3 bg-white/30 dark:bg-black/30 backdrop-blur-2xl border border-white/50 dark:border-white/10 rounded-2xl p-6 shadow-2xl hover:bg-white/40 dark:hover:bg-black/40 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-all duration-300 transform"
                     >
                         <h3 class="text-xl font-bold">{{ session.title }}</h3>
                         <span class="text-sm text-slate-500 dark:text-slate-400 font-medium">{{ session.date }}</span>

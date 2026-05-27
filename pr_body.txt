@@ -1,0 +1,7 @@
+## Summary
+Restores the vibrant Glassmorphism aesthetic by removing opaque background layers that were hiding the wave mesh, and dramatically enhances card reactivity.
+
+## Changes
+- Removed opaque Tailwind `bg-slate-50` and `dark:bg-slate-900` classes from the `<body>` to allow the wave mesh to shine through.
+- Added explicit base `background-color` to `.wave-background` in `style.css` so it blends properly on transparent bodies.
+- Enhanced card classes with deeper `backdrop-blur-2xl`, stronger `hover:-translate-y-1` physics, and increased transparency (`bg-white/20`) to maximize the glass effect.
