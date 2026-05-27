@@ -4,13 +4,19 @@ const App = {
     setup() {
         const isDarkMode = ref(localStorage.getItem('theme') === 'dark');
         
-        // Initial setup for theme
-        if (isDarkMode.value) document.documentElement.setAttribute('data-theme', 'dark');
+        // Initial setup for Tailwind's class-based dark mode
+        if (isDarkMode.value) document.documentElement.classList.add('dark');
 
         const toggleTheme = () => {
             isDarkMode.value = !isDarkMode.value;
             const theme = isDarkMode.value ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', theme);
+            
+            if (isDarkMode.value) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            
             localStorage.setItem('theme', theme);
         };
 
@@ -35,58 +41,38 @@ const App = {
             }
         };
 
-        const deleteTask = (index, event) => {
-            const el = event.currentTarget.closest('.task-card');
-            if (el) {
-                // Add a "pop" exit animation
-                gsap.to(el, {
-                    scale: 1.1,
-                    opacity: 0,
-                    duration: 0.2,
-                    ease: "back.in(1.7)",
-                    onComplete: () => {
-                        tasks.value.splice(index, 1);
-                    }
-                });
-            } else {
-                tasks.value.splice(index, 1);
-            }
+        const deleteTask = (index) => {
+            // Wait for Vue's next tick before animating the exit if we want, or rely on Tailwind transition
+            tasks.value.splice(index, 1);
         };
 
-        // 3D Parallax Tilt Effect for Cards
-        const tiltEffect = (event) => {
-            const el = event.currentTarget;
-            const rect = el.getBoundingClientRect();
+        // 3D Tilt Effect applied to elements with .card class
+        const tiltEffect = (e, card) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
             
-            // Mouse position relative to the element
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-            
-            // Center of the element
             const centerX = rect.width / 2;
             const centerY = rect.height / 2;
             
-            // Calculate rotation (max 15 degrees)
-            const rotateX = ((y - centerY) / centerY) * -15;
-            const rotateY = ((x - centerX) / centerX) * 15;
+            const rotateX = ((y - centerY) / centerY) * -10; // Max 10 deg rotation
+            const rotateY = ((x - centerX) / centerX) * 10;
             
-            gsap.to(el, {
-                rotationX: rotateX,
-                rotationY: rotateY,
+            gsap.to(card, {
+                rotateX: rotateX,
+                rotateY: rotateY,
                 transformPerspective: 1000,
-                ease: 'power1.out',
-                duration: 0.4
+                duration: 0.4,
+                ease: "power2.out"
             });
         };
 
-        // Reset Tilt when mouse leaves
-        const resetTilt = (event) => {
-            const el = event.currentTarget;
-            gsap.to(el, {
-                rotationX: 0,
-                rotationY: 0,
-                ease: 'power3.out',
-                duration: 0.6
+        const resetTilt = (card) => {
+            gsap.to(card, {
+                rotateX: 0,
+                rotateY: 0,
+                duration: 0.6,
+                ease: "power2.out"
             });
         };
 
@@ -113,6 +99,12 @@ const App = {
                     ease: "power2.out"
                 });
             });
+
+            // Bind tilt effects to all cards
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('mousemove', (e) => tiltEffect(e, card));
+                card.addEventListener('mouseleave', () => resetTilt(card));
+            });
         });
 
         return {
@@ -122,9 +114,7 @@ const App = {
             newTask,
             sessions,
             addTask,
-            deleteTask,
-            tiltEffect,
-            resetTilt
+            deleteTask
         };
     }
 };
