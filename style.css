@@ -1,0 +1,139 @@
+:root {
+    --mouse-x: 0.5;
+    --mouse-y: 0.5;
+    --color-1: #e0f2fe;
+    --color-2: #f3e8ff;
+    --color-3: #fce7f3;
+    --color-4: #e0e7ff;
+    
+    --text-primary: #1f2937;
+    --text-secondary: #4b5563;
+    --bg-surface: #ffffff;
+    --primary-blue: #1a73e8;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.dynamic-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background: radial-gradient(
+            circle at calc(var(--mouse-x) * 100%) calc(var(--mouse-y) * 100%), 
+            var(--color-1) 0%, 
+            transparent 50%
+        ),
+        radial-gradient(
+            circle at calc((1 - var(--mouse-x)) * 100%) calc(var(--mouse-y) * 100%), 
+            var(--color-2) 0%, 
+            transparent 50%
+        ),
+        radial-gradient(
+            circle at calc(var(--mouse-x) * 100%) calc((1 - var(--mouse-y)) * 100%), 
+            var(--color-3) 0%, 
+            transparent 50%
+        ),
+        radial-gradient(
+            circle at calc((1 - var(--mouse-x)) * 100%) calc((1 - var(--mouse-y)) * 100%), 
+            var(--color-4) 0%, 
+            transparent 50%
+        );
+    background-color: #fafafa;
+}
+
+#app {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+}
+
+.dashboard {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+
+.timer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.timer-ring-container {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    margin-bottom: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.progress-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: rotate(-90deg);
+}
+
+.timer-display {
+    font-size: 4.5rem;
+    font-weight: 300;
+    z-index: 10;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+}
+
+.magnetic-btn {
+    position: relative;
+    border: none;
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    padding: 1rem 2.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.magnetic-btn span {
+    display: inline-block;
+    pointer-events: none;
+}
+
+.magnetic-btn.active {
+    background: var(--primary-blue);
+    color: white;
+}

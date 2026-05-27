@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Flow</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <div class="dynamic-background"></div>
+    <div id="app">
+        <header>
+            <h1>Focus Flow</h1>
+            <div class="dashboard">
+                <span>Total Focus Time: {{ totalFocusTime }} minutes</span>
+            </div>
+        </header>
+
+        <main class="timer-container">
+            <div class="timer-ring-container">
+                <svg class="progress-ring" width="300" height="300">
+                    <circle class="progress-ring-circle-bg" stroke="#f1f3f4" stroke-width="6" fill="transparent" r="140" cx="150" cy="150"/>
+                    <circle class="progress-ring-circle" stroke="#1a73e8" stroke-width="6" fill="transparent" r="140" cx="150" cy="150"/>
+                </svg>
+                <div class="timer-display">
+                    {{ formattedTime }}
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="magnetic-btn" @click="toggleTimer" :class="{'active': isRunning}">
+                    <span>{{ isRunning ? 'Pause' : 'Start' }}</span>
+                </button>
+                <button class="magnetic-btn" @click="resetTimer">
+                    <span>Reset</span>
+                </button>
+            </div>
+        </main>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
