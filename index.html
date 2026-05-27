@@ -43,7 +43,11 @@
         </header>
 
         <!-- Gamification Dashboard -->
-        <div class="mb-10 card bg-white/20 dark:bg-black/20 backdrop-blur-2xl border border-white/50 dark:border-white/10 rounded-2xl p-6 shadow-2xl flex items-center gap-6">
+        <div 
+            class="mb-10 card bg-white/20 dark:bg-black/20 backdrop-blur-2xl border border-white/50 dark:border-white/10 rounded-2xl p-6 shadow-2xl flex items-center gap-6 transition-colors transition-shadow duration-300"
+            @mousemove="tiltEffect($event, $event.currentTarget)"
+            @mouseleave="resetTilt($event.currentTarget)"
+        >
             <div class="text-center">
                 <div class="text-4xl font-black text-blue-600 dark:text-blue-400 drop-shadow-md">Lvl {{ level }}</div>
                 <div class="text-sm font-bold text-slate-500 uppercase tracking-widest mt-1">Focus Mage</div>
@@ -94,7 +98,9 @@
                     <li 
                         v-for="task in tasks" 
                         :key="task.id"
-                        class="card group flex justify-between items-center bg-white/30 dark:bg-black/30 backdrop-blur-2xl border border-white/50 dark:border-white/10 rounded-2xl p-5 shadow-2xl hover:bg-white/40 dark:hover:bg-black/40 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-colors transition-shadow duration-300 transform"
+                        class="card group flex justify-between items-center bg-white/30 dark:bg-black/30 backdrop-blur-2xl border border-white/50 dark:border-white/10 rounded-2xl p-5 shadow-2xl hover:bg-white/40 dark:hover:bg-black/40 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-colors transition-shadow duration-300"
+                        @mousemove="tiltEffect($event, $event.currentTarget)"
+                        @mouseleave="resetTilt($event.currentTarget)"
                     >
                         <span class="text-lg font-medium">{{ task }}</span>
                         <button 
@@ -121,7 +127,9 @@
                     <div 
                         v-for="(session, index) in sessions" 
                         :key="index"
-                        class="card flex flex-col gap-3 bg-white/30 dark:bg-black/30 backdrop-blur-2xl border border-white/50 dark:border-white/10 rounded-2xl p-6 shadow-2xl hover:bg-white/40 dark:hover:bg-black/40 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-all duration-300 transform"
+                        class="card flex flex-col gap-3 bg-white/30 dark:bg-black/30 backdrop-blur-2xl border border-white/50 dark:border-white/10 rounded-2xl p-6 shadow-2xl hover:bg-white/40 dark:hover:bg-black/40 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-colors transition-shadow duration-300"
+                        @mousemove="tiltEffect($event, $event.currentTarget)"
+                        @mouseleave="resetTilt($event.currentTarget)"
                     >
                         <h3 class="text-xl font-bold">{{ session.title }}</h3>
                         <span class="text-sm text-slate-500 dark:text-slate-400 font-medium">{{ session.date }}</span>

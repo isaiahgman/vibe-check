@@ -108,6 +108,7 @@ const App = {
             gsap.to(card, {
                 rotateX: rotateX,
                 rotateY: rotateY,
+                y: -5,
                 transformPerspective: 1000,
                 duration: 0.4,
                 ease: "power2.out"
@@ -118,6 +119,7 @@ const App = {
             gsap.to(card, {
                 rotateX: 0,
                 rotateY: 0,
+                y: 0,
                 duration: 0.6,
                 ease: "power2.out"
             });
@@ -147,12 +149,6 @@ const App = {
                     ease: "power2.out"
                 });
             });
-
-            // Bind tilt effects to all cards
-            document.querySelectorAll('.card').forEach(card => {
-                card.addEventListener('mousemove', (e) => tiltEffect(e, card));
-                card.addEventListener('mouseleave', () => resetTilt(card));
-            });
         });
 
         return {
@@ -167,7 +163,9 @@ const App = {
             xp,
             xp_required_for_next_level,
             progress_percentage,
-            addFocusSession
+            addFocusSession,
+            tiltEffect,
+            resetTilt
         };
     }
 };
