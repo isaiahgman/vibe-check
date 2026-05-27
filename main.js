@@ -26,10 +26,11 @@ const App = {
             localStorage.setItem('theme', theme);
         };
 
+        let nextId = 4;
         const tasks = ref([
-            'Review PR #42',
-            'Update Vue components',
-            'Write documentation'
+            { id: 1, text: 'Review PR #42' },
+            { id: 2, text: 'Update Vue components' },
+            { id: 3, text: 'Write documentation' }
         ]);
         const newTask = ref('');
 

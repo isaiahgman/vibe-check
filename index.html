@@ -102,9 +102,9 @@
                         @mousemove="tiltEffect($event, $event.currentTarget)"
                         @mouseleave="resetTilt($event.currentTarget)"
                     >
-                        <span class="text-lg font-medium">{{ task }}</span>
+                        <span class="text-lg font-medium">{{ task.text }}</span>
                         <button 
-                            @click="deleteTask(index)" 
+                            @click="deleteTask(task.id)" 
                             class="text-slate-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-lg transition-colors"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
