@@ -141,6 +141,7 @@ class FocusHandler(http.server.SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     init_db()
+    socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer(("", PORT), FocusHandler) as httpd:
-        print(f"Serving at port {PORT}")
+        print(f"Serving Focus Flow at http://localhost:{PORT}")
         httpd.serve_forever()
