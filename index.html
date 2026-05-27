@@ -3,40 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Focus Flow</title>
+    <title>Vibe Check</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Vue 3 CDN -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- GSAP CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
 <body>
-    <div class="dynamic-background"></div>
-    <div id="app">
+    <div class="wave-background"></div>
+    <div id="custom-cursor"></div>
+    <div id="app" class="container">
         <header>
+            <button class="theme-toggle" @click="toggleTheme" :aria-label="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">{{ isDarkMode ? '☀️' : '🌙' }}</button>
             <h1>Focus Flow</h1>
-            <div class="dashboard">
-                <span>Total Focus Time: {{ totalFocusTime }} minutes</span>
-            </div>
+            <p class="subtitle">Focus and track your sessions</p>
         </header>
-
-        <main class="timer-container">
-            <div class="timer-ring-container">
-                <svg class="progress-ring" width="300" height="300">
-                    <circle class="progress-ring-circle-bg" stroke="#f1f3f4" stroke-width="6" fill="transparent" r="140" cx="150" cy="150"/>
-                    <circle class="progress-ring-circle" stroke="#1a73e8" stroke-width="6" fill="transparent" r="140" cx="150" cy="150"/>
-                </svg>
-                <div class="timer-display">
-                    {{ formattedTime }}
+        
+        <main class="grid-layout">
+            <!-- Task Manager Section -->
+            <section class="task-manager">
+                <h2>Task Manager</h2>
+                <div class="input-group">
+                    <input type="text" v-model="newTask" @keyup.enter="addTask" placeholder="Add a new task to focus on...">
+                    <button @click="addTask">Add</button>
                 </div>
-            </div>
-
-            <div class="controls">
-                <button class="magnetic-btn" @click="toggleTimer" :class="{'active': isRunning}">
-                    <span>{{ isRunning ? 'Pause' : 'Start' }}</span>
-                </button>
-                <button class="magnetic-btn" @click="resetTimer">
-                    <span>Reset</span>
-                </button>
-            </div>
+                <ul class="task-list">
+                    <li v-for="(task, index) in tasks" :key="index" 
+                        class="card task-card" 
+                        @mousemove="tiltEffect($event)" 
+                        @mouseleave="resetTilt($event)">
+                        <span class="task-text">{{ task }}</span>
+                        <button class="delete-btn" @click="deleteTask(index, $event)" aria-label="Delete task">✕</button>
+                    </li>
+                    <li v-if="tasks.length === 0" class="empty-state">
+                        No tasks yet. Add one above!
+                    </li>
+                </ul>
+            </section>
+            
+            <!-- Session History Section -->
+            <section class="session-history">
+                <h2>Session History</h2>
+                <div class="history-grid">
+                    <div v-for="(session, index) in sessions" :key="index" 
+                         class="card history-card"
+                         @mousemove="tiltEffect($event)" 
+                         @mouseleave="resetTilt($event)">
+                        <h3>{{ session.title }}</h3>
+                        <p class="date">{{ session.date }}</p>
+                        <span class="status" :class="session.status.toLowerCase()">{{ session.status }}</span>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
     <script src="main.js"></script>
