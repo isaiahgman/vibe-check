@@ -1,4 +1,5 @@
+node_modules/
+coverage/
+.vitest/
+*.db
 .DS_Store
-__pycache__/
-*.pyc
-data.json

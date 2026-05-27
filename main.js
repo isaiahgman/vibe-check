@@ -2,8 +2,20 @@ const { createApp, ref, onMounted } = Vue;
 
 const App = {
     setup() {
-        const isDarkMode = ref(localStorage.getItem('theme') === 'dark');
+        let initialTheme = false;
+        try {
+            initialTheme = localStorage.getItem('theme') === 'dark';
+        } catch(e) {
+            console.warn("localStorage unavailable");
+        }
+        const isDarkMode = ref(initialTheme);
         
+        // Gamification State
+        const level = ref(1);
+        const xp = ref(0);
+        const xp_required_for_next_level = ref(100);
+        const progress_percentage = ref(0);
+
         // Initial setup for Tailwind's class-based dark mode
         if (isDarkMode.value) document.documentElement.classList.add('dark');
 
@@ -17,13 +29,18 @@ const App = {
                 document.documentElement.classList.remove('dark');
             }
             
-            localStorage.setItem('theme', theme);
+            try {
+                localStorage.setItem('theme', theme);
+            } catch(e) {
+                console.warn('localStorage unavailable', e);
+            }
         };
 
+        let nextId = 4;
         const tasks = ref([
-            'Review PR #42',
-            'Update Vue components',
-            'Write documentation'
+            { id: 1, text: 'Review PR #42' },
+            { id: 2, text: 'Update Vue components' },
+            { id: 3, text: 'Write documentation' }
         ]);
         const newTask = ref('');
 
@@ -34,16 +51,57 @@ const App = {
             { title: 'Planning Phase', date: 'Oct 25, 10:00 AM', status: 'Pending' }
         ]);
 
-        const addTask = () => {
-            if (newTask.value.trim()) {
-                tasks.value.push(newTask.value.trim());
-                newTask.value = '';
+        const deleteTask = (id) => {
+            const index = tasks.value.findIndex(t => t.id === id);
+            if (index !== -1) tasks.value.splice(index, 1);
+        };
+
+        const fetchStats = async () => {
+            try {
+                const response = await fetch('/api/focus');
+                const data = await response.json();
+                if (data.level) {
+                    level.value = data.level;
+                    xp.value = data.xp;
+                    xp_required_for_next_level.value = data.xp_required_for_next_level;
+                    progress_percentage.value = data.progress_percentage;
+                }
+            } catch (error) {
+                console.error("Failed to fetch stats", error);
             }
         };
 
-        const deleteTask = (index) => {
-            // Wait for Vue's next tick before animating the exit if we want, or rely on Tailwind transition
-            tasks.value.splice(index, 1);
+        const addFocusSession = async (minutes) => {
+            try {
+                const response = await fetch('/api/focus', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session_time: minutes })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    level.value = data.stats.level;
+                    xp.value = data.stats.xp;
+                    xp_required_for_next_level.value = data.stats.xp_required_for_next_level;
+                    progress_percentage.value = data.stats.progress_percentage;
+                    
+                    // Add to session history
+                    sessions.value.unshift({
+                        title: `${minutes}m Focus Block`,
+                        date: new Date().toLocaleString(),
+                        status: 'Completed'
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to post session", error);
+            }
+        };
+
+        const addTask = () => {
+            if (newTask.value.trim()) {
+                tasks.value.push({ id: nextId++, text: newTask.value.trim() });
+                newTask.value = '';
+            }
         };
 
         // 3D Tilt Effect applied to elements with .card class
@@ -61,6 +119,7 @@ const App = {
             gsap.to(card, {
                 rotateX: rotateX,
                 rotateY: rotateY,
+                y: -5,
                 transformPerspective: 1000,
                 duration: 0.4,
                 ease: "power2.out"
@@ -71,12 +130,14 @@ const App = {
             gsap.to(card, {
                 rotateX: 0,
                 rotateY: 0,
+                y: 0,
                 duration: 0.6,
                 ease: "power2.out"
             });
         };
 
         onMounted(() => {
+            fetchStats();
             const cursor = document.getElementById('custom-cursor');
             
             // Start cursor offscreen
@@ -99,12 +160,6 @@ const App = {
                     ease: "power2.out"
                 });
             });
-
-            // Bind tilt effects to all cards
-            document.querySelectorAll('.card').forEach(card => {
-                card.addEventListener('mousemove', (e) => tiltEffect(e, card));
-                card.addEventListener('mouseleave', () => resetTilt(card));
-            });
         });
 
         return {
@@ -114,7 +169,14 @@ const App = {
             newTask,
             sessions,
             addTask,
-            deleteTask
+            deleteTask,
+            level,
+            xp,
+            xp_required_for_next_level,
+            progress_percentage,
+            addFocusSession,
+            tiltEffect,
+            resetTilt
         };
     }
 };
