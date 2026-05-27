@@ -1,7 +1,8 @@
 ## Summary
-Restores the vibrant Glassmorphism aesthetic by removing opaque background layers that were hiding the wave mesh, and dramatically enhances card reactivity.
+Completes the backend rewrite to implement the RPG Gamification Engine, fixes the CSS physics lag on the cards, and updates the CI pipeline to generate test coverage reports for transparency!
 
 ## Changes
-- Removed opaque Tailwind `bg-slate-50` and `dark:bg-slate-900` classes from the `<body>` to allow the wave mesh to shine through.
-- Added explicit base `background-color` to `.wave-background` in `style.css` so it blends properly on transparent bodies.
-- Enhanced card classes with deeper `backdrop-blur-2xl`, stronger `hover:-translate-y-1` physics, and increased transparency (`bg-white/20`) to maximize the glass effect.
+- **Gamification Logic:** Rewrote `server.py` to use an SQLite database tracking User Level and XP. Built an algorithm where 1 minute focus = 10 XP, scaling infinitely with `Level = XP ^ 1.5`.
+- **UI Progress Bar:** Hooked the Vue frontend to the new backend API, adding a reactive progress bar.
+- **Physics Fix:** Removed `transition-all` from the cards, resolving the stuttering conflict with the GSAP 3D physics engine. 
+- **CI/CD Coverage:** Added `@vitest/coverage-v8` and `pytest-cov`, and updated `.github/workflows/ci.yml` so every PR will now output code coverage summaries for transparency!
