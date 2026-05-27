@@ -1,0 +1,13 @@
+{
+  "name": "vibe-check-focus-flow",
+  "version": "1.0.0",
+  "description": "Focus Flow Pomodoro Tracker",
+  "scripts": {
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "vitest": "^0.34.4"
+  }
+}
