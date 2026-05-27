@@ -93,8 +93,6 @@ const App = {
             }
         };
 
-        };
-
         // 3D Tilt Effect applied to elements with .card class
         const tiltEffect = (e, card) => {
             const rect = card.getBoundingClientRect();

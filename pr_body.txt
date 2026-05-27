@@ -1,8 +1,0 @@
-## Summary
-Completes the backend rewrite to implement the RPG Gamification Engine, fixes the CSS physics lag on the cards, and updates the CI pipeline to generate test coverage reports for transparency!
-
-## Changes
-- **Gamification Logic:** Rewrote `server.py` to use an SQLite database tracking User Level and XP. Built an algorithm where 1 minute focus = 10 XP, scaling infinitely with `Level = XP ^ 1.5`.
-- **UI Progress Bar:** Hooked the Vue frontend to the new backend API, adding a reactive progress bar.
-- **Physics Fix:** Removed `transition-all` from the cards, resolving the stuttering conflict with the GSAP 3D physics engine. 
-- **CI/CD Coverage:** Added `@vitest/coverage-v8` and `pytest-cov`, and updated `.github/workflows/ci.yml` so every PR will now output code coverage summaries for transparency!

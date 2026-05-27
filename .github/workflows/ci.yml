@@ -33,4 +33,4 @@ jobs:
     - name: Install pytest
       run: pip install pytest pytest-cov requests
     - name: Run Python Tests with Coverage
-      run: pytest tests/backend_test.py --cov=server --cov-report=term
+      run: PYTHONPATH=. pytest tests/backend_test.py --cov=server --cov-report=term
