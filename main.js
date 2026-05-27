@@ -31,7 +31,9 @@ const App = {
             
             try {
                 localStorage.setItem('theme', theme);
-            } catch(e) {}
+            } catch(e) {
+                console.warn('localStorage unavailable', e);
+            }
         };
 
         let nextId = 4;
