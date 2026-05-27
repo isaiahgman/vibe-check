@@ -1,4 +1,4 @@
-const { createApp, ref, onMounted } = Vue;
+const { createApp, ref, computed, onMounted } = Vue;
 
 const App = {
     setup() {
@@ -71,29 +71,112 @@ const App = {
             }
         };
 
-        const addFocusSession = async (minutes) => {
+        const isFocusing = ref(false);
+        const timeRemaining = ref(25 * 60);
+        const activeSessionId = ref(null);
+        let timerInterval = null;
+
+        const formattedTime = computed(() => {
+            const m = Math.floor(timeRemaining.value / 60).toString().padStart(2, '0');
+            const s = (timeRemaining.value % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        });
+
+        const startFocus = async (minutes) => {
             try {
-                const response = await fetch('/api/focus', {
+                const response = await fetch('/api/focus/start', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ session_time: minutes })
                 });
                 const data = await response.json();
                 if (data.success) {
+                    isFocusing.value = true;
+                    timeRemaining.value = minutes * 60;
+                    activeSessionId.value = data.session_id;
+                    
+                    sessions.value.unshift({
+                        id: data.session_id,
+                        title: `Focusing...`,
+                        date: new Date().toLocaleString(),
+                        status: 'Active'
+                    });
+
+                    timerInterval = setInterval(() => {
+                        if (timeRemaining.value > 0) {
+                            timeRemaining.value--;
+                        } else {
+                            completeFocus();
+                        }
+                    }, 1000);
+                }
+            } catch (error) {
+                console.error("Failed to start session", error);
+            }
+        };
+
+        const completeFocus = async () => {
+            if (timerInterval) clearInterval(timerInterval);
+            try {
+                const response = await fetch('/api/focus/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session_id: activeSessionId.value })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
                     level.value = data.stats.level;
                     xp.value = data.stats.xp;
                     xp_required_for_next_level.value = data.stats.xp_required_for_next_level;
                     progress_percentage.value = data.stats.progress_percentage;
                     
-                    // Add to session history
-                    sessions.value.unshift({
-                        title: `${minutes}m Focus Block`,
-                        date: new Date().toLocaleString(),
-                        status: 'Completed'
-                    });
+                    const idx = sessions.value.findIndex(s => s.id === activeSessionId.value);
+                    if (idx !== -1) {
+                        sessions.value[idx].title = data.quest_title;
+                        sessions.value[idx].status = 'Completed';
+                    }
+                } else {
+                    console.error("Verification Failed:", data.error);
+                    const idx = sessions.value.findIndex(s => s.id === activeSessionId.value);
+                    if (idx !== -1) {
+                        sessions.value[idx].title = "Anti-Cheat: Verification Failed";
+                        sessions.value[idx].status = 'Failed';
+                    }
                 }
             } catch (error) {
-                console.error("Failed to post session", error);
+                console.error("Failed to complete session", error);
+            }
+            
+            isFocusing.value = false;
+            timeRemaining.value = 25 * 60;
+            activeSessionId.value = null;
+        };
+
+        const abandonFocus = () => {
+            if (timerInterval) clearInterval(timerInterval);
+            isFocusing.value = false;
+            timeRemaining.value = 25 * 60;
+            
+            const idx = sessions.value.findIndex(s => s.id === activeSessionId.value);
+            if (idx !== -1) {
+                sessions.value[idx].title = "Abandoned Quest";
+                sessions.value[idx].status = 'Failed';
+            }
+            activeSessionId.value = null;
+        };
+
+        const devFastForward = async (minutes) => {
+            if (!isFocusing.value) return;
+            try {
+                await fetch('/api/focus/dev-fast-forward', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session_id: activeSessionId.value, minutes: minutes })
+                });
+                timeRemaining.value = 0; // Trigger completion next tick
+            } catch (error) {
+                console.error("Failed to fast forward", error);
             }
         };
 
@@ -174,7 +257,11 @@ const App = {
             xp,
             xp_required_for_next_level,
             progress_percentage,
-            addFocusSession,
+            isFocusing,
+            formattedTime,
+            startFocus,
+            abandonFocus,
+            devFastForward,
             tiltEffect,
             resetTilt
         };
